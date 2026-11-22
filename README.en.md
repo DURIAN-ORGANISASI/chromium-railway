@@ -9,7 +9,7 @@
 <p><a href="README.md">🇮🇩 Bahasa Indonesia</a> · <a href="README.en.md">🇬🇧 English</a></p>
 
 <p><strong>Run Chromium Desktop on Railway and access it from a browser.</strong><br>
-Includes username/password login and persistent browser profile storage.</p>
+Includes username/password login and a temporary browser profile in the container filesystem.</p>
 
 <p><a href="docs/DEPLOY-RAILWAY.md">📘 Railway deployment guide</a> · <a href="#features">Features</a> · <a href="#railway-variables">Variables</a> · <a href="#deploy-to-railway">Deploy</a> · <a href="#security">Security</a> · <a href="#sources-attribution-and-license">Sources &amp; license</a></p>
 
@@ -26,7 +26,7 @@ Includes username/password login and persistent browser profile storage.</p>
 
 ## Overview
 
-Chromium runs as a single Docker service on Railway. Its desktop interface is streamed to your browser through the Selkies web client. A Railway Volume mounted at `/config` stores the browser profile so bookmarks, extensions, cookies, preferences, and saved files remain available after restarts and redeployments.
+Chromium runs as a single Docker service on Railway. Its desktop interface is streamed to your browser through the Selkies web client. The browser profile is stored in the container's ordinary filesystem at `/config`, without a Railway Volume. Bookmarks, extensions, cookies, preferences, and saved files remain available while the same container exists, but are lost when Railway recreates the container or replaces the deployment.
 
 | Component | Configuration |
 | --- | --- |
@@ -35,7 +35,7 @@ Chromium runs as a single Docker service on Railway. Its desktop interface is st
 | Internal port | `3000` |
 | Access | Railway HTTPS domain |
 | Login | `CUSTOM_USER` + `PASSWORD` |
-| Persistent storage | Railway Volume at `/config` |
+| Browser profile | Temporary container filesystem at `/config` |
 | Additional services | None required |
 
 ## Features
@@ -48,7 +48,7 @@ Chromium runs as a single Docker service on Railway. Its desktop interface is st
 - **Chromium Desktop:** full visual browser, not headless mode.
 - **Access from anywhere:** open the Railway domain in Chrome, Edge, Firefox, or another modern browser.
 - **Username/password login:** the web interface is protected by HTTP Basic Authentication.
-- **Persistent profile:** bookmarks, cookies, extensions, history, settings, and files in `/config` survive container restarts and redeployments.
+- **Temporary profile without a Volume:** bookmarks, cookies, extensions, history, settings, and files are stored directly in the container filesystem at `/config`.
 - **Keyboard, mouse, and clipboard:** control Chromium from desktop or mobile devices.
 - **File upload/download:** use the Selkies sidebar when file transfer is enabled.
 - **Hardened desktop mode:** `HARDEN_DESKTOP=true` disables the desktop terminal and sudo.
@@ -112,15 +112,9 @@ RAILWAY_SHM_SIZE_BYTES=1073741824
 
 Replace `CUSTOM_USER` and `PASSWORD` with your own values. Deploy/redeploy after saving the variables.
 
-### 4. Add a Volume
+### 4. Use the ordinary container filesystem
 
-Open **Volumes → New Volume** on the Chromium service. Set the mount path exactly to:
-
-```text
-/config
-```
-
-This Volume is important. Without it, your browser profile and files may be lost when the container is recreated or redeployed.
+Do not create a Railway Volume and do not mount external storage at `/config`. Chromium uses the `/config` directory in the container's normal writable filesystem. The profile is temporary and is reset when Railway recreates the container or replaces the deployment.
 
 ### 5. Configure Networking
 
@@ -172,7 +166,7 @@ Edit `.env` and replace `PASSWORD`, then run:
 docker compose up -d --build
 ```
 
-Open `http://localhost:3000` and sign in with the username and password from `.env`. The browser profile is stored in the local `data/` directory.
+Open `http://localhost:3000` and sign in with the username and password from `.env`. The browser profile is stored in the container filesystem at `/config`; it is temporary and disappears when the container is recreated.
 
 ## Troubleshooting
 
@@ -182,7 +176,7 @@ Open `http://localhost:3000` and sign in with the username and password from `.e
 | Login prompt keeps appearing | Verify `CUSTOM_USER` and `PASSWORD` in Variables, then redeploy. |
 | Blank browser desktop | Wait for the desktop session to initialize, then refresh. Check Deploy Logs if it remains blank. |
 | Browser crashes frequently | Start with one tab, allocate sufficient service RAM, and keep shared memory at `1 GiB`. |
-| Bookmarks/cookies disappear | Ensure the Railway Volume is mounted at `/config` on the correct service and environment. |
+| Bookmarks/cookies disappear after redeployment | This is expected without a Volume. The browser uses temporary container storage, so the profile is not preserved when the container is recreated. |
 | Upload/download menu is missing | Open the Selkies sidebar and check whether file transfer is enabled in the image configuration. |
 | Websites are slow | Rendering uses CPU rather than a GPU. WebGL, 3D games, and high-resolution video may be slower. |
 
@@ -192,7 +186,7 @@ Open `http://localhost:3000` and sign in with the username and password from `.e
 - Do not share the browser domain, username, password, or session.
 - Access the browser through the Railway HTTPS domain, not an unencrypted public HTTP endpoint.
 - Keep `HARDEN_DESKTOP=true` to disable the desktop terminal and sudo.
-- The browser stores cookies, signed-in sessions, and website passwords in `/config`. Treat the Volume as sensitive data.
+- The browser stores cookies, signed-in sessions, and website passwords in `/config`. This data is in the temporary container filesystem, not persistent storage.
 - Avoid signing in to sensitive accounts on shared devices unless you clear the session afterward.
 - Avoid downloading or opening untrusted files. Anyone who can sign in can control the browser.
 - `CUSTOM_USER` and `PASSWORD` provide one basic authentication layer, not multi-user accounts or SSO. For organizational access, add an authentication gateway such as Cloudflare Access in front of the domain.

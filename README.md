@@ -9,7 +9,7 @@
 <p><a href="README.md">🇮🇩 Bahasa Indonesia</a> · <a href="README.en.md">🇬🇧 English</a></p>
 
 <p><strong>Jalankan Chromium Desktop di Railway dan akses melalui browser.</strong><br>
-Dilengkapi login username/password dan penyimpanan profil browser permanen.</p>
+Dilengkapi login username/password dan profil browser sementara di filesystem container.</p>
 
 <p><a href="docs/DEPLOY-RAILWAY.md">📘 Panduan deploy Railway</a> · <a href="#fitur">Fitur</a> · <a href="#variables-railway">Variables</a> · <a href="#deploy-ke-railway">Deploy</a> · <a href="#keamanan">Keamanan</a> · <a href="#sumber-atribusi-dan-lisensi">Sumber &amp; lisensi</a></p>
 
@@ -26,7 +26,7 @@ Dilengkapi login username/password dan penyimpanan profil browser permanen.</p>
 
 ## Ringkasan
 
-Chromium berjalan di satu Docker service Railway. Antarmuka desktop dikirim ke browser melalui web client Selkies. Volume Railway pada `/config` menyimpan profil browser sehingga bookmark, ekstensi, cookies, pengaturan, dan file yang tersimpan tetap tersedia setelah container restart atau redeploy.
+Chromium berjalan di satu Docker service Railway. Antarmuka desktop dikirim ke browser melalui web client Selkies. Profil browser disimpan pada filesystem biasa container di `/config`, tanpa Railway Volume. Bookmark, ekstensi, cookies, pengaturan, dan file tetap tersedia selama container yang sama berjalan, tetapi akan hilang ketika container dibuat ulang atau deployment diganti.
 
 | Komponen | Konfigurasi |
 | --- | --- |
@@ -35,7 +35,7 @@ Chromium berjalan di satu Docker service Railway. Antarmuka desktop dikirim ke b
 | Port internal | `3000` |
 | Akses | Domain HTTPS Railway |
 | Login | `CUSTOM_USER` + `PASSWORD` |
-| Persistent storage | Railway Volume pada `/config` |
+| Browser profile | Filesystem container sementara pada `/config` |
 | Service tambahan | Tidak diperlukan |
 
 ## Fitur
@@ -48,7 +48,7 @@ Chromium berjalan di satu Docker service Railway. Antarmuka desktop dikirim ke b
 - **Chromium Desktop:** browser lengkap dengan tampilan visual, bukan mode headless.
 - **Akses dari mana saja:** buka domain Railway lewat Chrome, Edge, Firefox, atau browser modern lainnya.
 - **Login username/password:** akses web browser dilindungi HTTP Basic Authentication.
-- **Profil persisten:** bookmark, cookies, ekstensi, riwayat, pengaturan, dan file di `/config` bertahan melalui Railway Volume.
+- **Profil sementara tanpa Volume:** bookmark, cookies, ekstensi, riwayat, pengaturan, dan file disimpan langsung di filesystem container pada `/config`.
 - **Keyboard, mouse, dan clipboard:** kendalikan Chromium dari desktop atau perangkat seluler.
 - **Upload/download file:** gunakan panel Selkies bila fitur file transfer diaktifkan.
 - **Mode desktop lebih aman:** `HARDEN_DESKTOP=true` menonaktifkan terminal dan sudo di desktop session.
@@ -112,15 +112,9 @@ RAILWAY_SHM_SIZE_BYTES=1073741824
 
 Ganti nilai `CUSTOM_USER` dan `PASSWORD` sesuai keinginan. Klik deploy/redeploy setelah menyimpan Variables.
 
-### 4. Tambahkan Volume
+### 4. Gunakan filesystem container biasa
 
-Buka **Volumes → New Volume** pada service Chromium. Atur mount path tepat seperti berikut:
-
-```text
-/config
-```
-
-Volume ini penting. Tanpa Volume, profil dan file browser dapat hilang saat container dibuat ulang atau redeploy.
+Tidak perlu membuat Railway Volume dan jangan memasang storage pada `/config`. Chromium otomatis memakai direktori `/config` di filesystem container. Profil browser bersifat sementara dan akan kembali kosong ketika container dibuat ulang atau deployment diganti.
 
 ### 5. Atur Networking
 
@@ -172,7 +166,7 @@ Edit `.env`, ganti `PASSWORD`, lalu jalankan:
 docker compose up -d --build
 ```
 
-Buka `http://localhost:3000`, lalu login menggunakan username dan password dari `.env`. Profil browser disimpan di folder `data/`.
+Buka `http://localhost:3000`, lalu login menggunakan username dan password dari `.env`. Profil browser disimpan di filesystem container pada `/config`; data ini tidak persisten dan hilang saat container dibuat ulang.
 
 ## Troubleshooting
 
@@ -182,7 +176,7 @@ Buka `http://localhost:3000`, lalu login menggunakan username dan password dari 
 | Dialog login terus muncul | Pastikan `CUSTOM_USER` dan `PASSWORD` pada Variables benar, lalu redeploy. |
 | Browser tampil kosong | Tunggu sesi desktop siap, lalu refresh halaman. Periksa Deploy Logs jika tetap kosong. |
 | Browser sering crash | Mulai dengan satu tab, sediakan RAM service yang memadai, dan pertahankan shared memory `1 GiB`. |
-| Bookmark/cookies hilang | Pastikan Railway Volume benar-benar terpasang pada `/config` di service dan environment yang sama. |
+| Bookmark/cookies hilang setelah redeploy | Ini normal tanpa Volume. Browser memakai filesystem container sementara, sehingga profil tidak dipertahankan ketika container dibuat ulang. |
 | Upload/download tidak muncul | Buka menu samping Selkies dan periksa apakah file transfer diaktifkan oleh konfigurasi image. |
 | Website lambat | Rendering memakai CPU, bukan GPU. WebGL, game 3D, dan video beresolusi tinggi dapat lebih lambat. |
 
@@ -192,7 +186,7 @@ Buka `http://localhost:3000`, lalu login menggunakan username dan password dari 
 - Jangan bagikan domain, username, password, atau sesi browser.
 - Akses browser melalui domain HTTPS Railway, bukan HTTP publik yang tidak terenkripsi.
 - Biarkan `HARDEN_DESKTOP=true` agar terminal dan sudo desktop session dinonaktifkan.
-- Browser menyimpan cookies, sesi login, dan password website di `/config`. Anggap Volume sebagai data sensitif.
+- Browser menyimpan cookies, sesi login, dan password website di `/config`. Data berada di filesystem container sementara, bukan storage persisten.
 - Jangan login ke akun penting dari perangkat bersama tanpa menghapus sesi setelah selesai.
 - Hindari mengunduh atau membuka file yang tidak dipercaya. Siapa pun yang berhasil login dapat mengontrol browser.
 - `CUSTOM_USER` dan `PASSWORD` merupakan satu lapisan autentikasi dasar, bukan sistem multi-user atau SSO. Untuk akses organisasi, tambahkan gateway autentikasi seperti Cloudflare Access di depan domain.

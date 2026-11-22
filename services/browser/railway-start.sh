@@ -162,9 +162,11 @@ write_login_file() {
   unset PASSWORD PASSWD SELKIES_BASIC_AUTH_PASSWORD
 }
 
-check_volume() {
-  if command -v mountpoint > /dev/null 2>&1 && ! mountpoint -q "$CONFIG_DIR"; then
-    log "WARNING: ${CONFIG_DIR} is not a mounted volume. The browser profile is lost on every redeploy."
+report_profile_storage() {
+  if command -v mountpoint > /dev/null 2>&1 && mountpoint -q "$CONFIG_DIR"; then
+    log "${CONFIG_DIR} has an external mount."
+  else
+    log "No persistent mount at ${CONFIG_DIR}; using the container filesystem. Browser profile and downloads are temporary and are lost when Railway recreates the container."
   fi
 }
 
@@ -329,7 +331,7 @@ main() {
   trap 'on_signal INT' INT
   validate_settings
   write_login_file
-  check_volume
+  report_profile_storage
   report_shared_memory
   adjust_chromium_flags
   prepare_s6_runtime

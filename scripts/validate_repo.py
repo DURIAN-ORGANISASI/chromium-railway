@@ -49,7 +49,9 @@ for relative in ["README.md", "README.en.md"]:
     path = ROOT / relative
     if path.exists():
         content = path.read_text(encoding="utf-8")
-        for required_text in ["CUSTOM_USER", "PASSWORD", "/config", "docs/architecture.svg", "SECURITY.md", "LICENSES/GPL-3.0-or-later.txt"]:
+        required_texts = ["CUSTOM_USER", "PASSWORD", "/config", "docs/architecture.svg", "SECURITY.md", "LICENSES/GPL-3.0-or-later.txt"]
+        required_texts.append("tanpa Volume" if relative == "README.md" else "without a Volume")
+        for required_text in required_texts:
             if required_text not in content:
                 errors.append(f"{relative} is missing reference: {required_text}")
         for forbidden in ["BROWSER_WS_ENDPOINT", "Browserless", "Hermes Agent", "ghcr.io/two-workspaces/chromium:246dc28"]:
@@ -63,6 +65,18 @@ if (ROOT / ".env.example").exists():
             errors.append(f".env.example is missing {key}")
     if "CHANGE_THIS_TO_A_UNIQUE_PASSWORD" not in env:
         errors.append(".env.example must contain a placeholder password, not a real password.")
+
+if (ROOT / "docker-compose.yml").exists():
+    compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
+    if "\\n    volumes:" in compose:
+        errors.append("docker-compose.yml must not mount a local or external volume at /config.")
+
+for relative in ["README.md", "README.en.md", "docs/DEPLOY-RAILWAY.md"]:
+    path = ROOT / relative
+    if path.exists():
+        content = path.read_text(encoding="utf-8").lower()
+        if "new volume" in content or "persistent volume" in content or "railway volume at" in content:
+            errors.append(f"{relative} still instructs users to configure a persistent Volume.")
 
 if errors:
     print("Repository validation failed:")

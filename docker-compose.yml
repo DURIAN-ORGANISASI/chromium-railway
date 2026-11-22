@@ -29,6 +29,4 @@ services:
       SELKIES_FRAMERATE: "${SELKIES_FRAMERATE:-30-30}"
       SELKIES_FILE_TRANSFERS: "${SELKIES_FILE_TRANSFERS:-upload,download}"
       SELKIES_UI_SIDEBAR_SHOW_FILES: "${SELKIES_UI_SIDEBAR_SHOW_FILES:-true}"
-    volumes:
-      - ./data:/config
     shm_size: "1gb"

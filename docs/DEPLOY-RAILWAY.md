@@ -45,15 +45,9 @@ SELKIES_FRAMERATE=30-30
 
 Jangan gunakan password contoh. Bila `PASSWORD` kosong atau tidak valid, startup sengaja mengunci login dengan password acak yang tidak diketahui dan mencatat peringatan ke Deploy Logs.
 
-## 3. Persistent Volume
+## 3. Filesystem biasa tanpa Volume
 
-Buat Railway Volume dan pasang pada service Chromium dengan mount path tepat:
-
-```text
-/config
-```
-
-Volume menyimpan profil browser, cookies, ekstensi, bookmark, pengaturan, dan file unduhan. Jangan menghapus atau memindahkan Volume jika ingin mempertahankan data browser.
+Jangan buat Railway Volume dan jangan pasang storage eksternal pada `/config`. Direktori `/config` disediakan oleh image Chromium dan menggunakan filesystem writable biasa milik container. Profil browser, cookies, ekstensi, bookmark, pengaturan, dan unduhan hanya bersifat sementara. Semuanya akan hilang ketika container dibuat ulang atau deployment diganti.
 
 ## 4. Networking dan health check
 
@@ -76,11 +70,11 @@ Buka domain Railway melalui HTTPS. Masukkan nilai `CUSTOM_USER` dan `PASSWORD` d
 | Domain 502 / connection refused | Periksa deployment status, Deploy Logs, dan target port 3000. |
 | Healthcheck gagal | Pastikan `/healthz` aktif dan service telah menggunakan image hasil build terbaru. |
 | Dialog login terus muncul | Periksa `CUSTOM_USER` dan `PASSWORD`; pastikan password minimal 8 karakter dan redeploy. |
-| Profil hilang sesudah redeploy | Pastikan Volume terpasang di `/config`. |
+| Profil hilang sesudah redeploy | Normal untuk mode tanpa Volume. Profil berada pada filesystem sementara container. |
 | Chromium crash / tab “Aw, Snap!” | Container 1 GB memakai default 1280×720 / 30 FPS. Kurangi tab dan workload berat. Bila perlu beberapa tab/halaman AI sekaligus, gunakan paket Railway dengan batas memori lebih tinggi. Pastikan shared-memory fallback aktif. |
 
 ## 7. Keamanan
 
 Nginx Basic Auth aktif secara paksa saat build. Startup membuat hash SHA-512 crypt pada `/etc/nginx/.htpasswd`, lalu menghapus password plaintext dari environment sebelum service desktop berjalan. Nginx juga memeriksa Origin untuk menolak cross-site access ke WebSocket, dan menambahkan header anti-framing.
 
-Tetap perlakukan URL, password, dan Volume `/config` sebagai rahasia. Gunakan password unik yang panjang. Untuk organisasi/SSO, pasang access gateway tambahan di depan domain publik.
+Tetap perlakukan URL, password, dan data profil `/config` sebagai rahasia. Gunakan password unik yang panjang. Untuk organisasi/SSO, pasang access gateway tambahan di depan domain publik.
