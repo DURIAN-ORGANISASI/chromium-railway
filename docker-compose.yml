@@ -20,7 +20,7 @@ services:
       PORT: "${PORT:-3000}"
       TZ: "${TZ:-Asia/Jakarta}"
       HARDEN_DESKTOP: "${HARDEN_DESKTOP:-true}"
-      SELKIES_FILE_TRANSFERS: "${SELKIES_FILE_TRANSFERS:-true}"
+      SELKIES_FILE_TRANSFERS: "${SELKIES_FILE_TRANSFERS:-upload,download}"
       SELKIES_UI_SIDEBAR_SHOW_FILES: "${SELKIES_UI_SIDEBAR_SHOW_FILES:-true}"
     volumes:
       - ./data:/config
