@@ -1,0 +1,22 @@
+services:
+  chromium:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: durian-organization/chromium-railway:local
+    container_name: chromium-railway
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      CUSTOM_USER: "${CUSTOM_USER:-chromium}"
+      PASSWORD: "${PASSWORD:?Set PASSWORD in .env before starting}"
+      PORT: "${PORT:-3000}"
+      TZ: "${TZ:-Asia/Jakarta}"
+      HARDEN_DESKTOP: "${HARDEN_DESKTOP:-true}"
+      CHROME_CLI: "${CHROME_CLI:---disable-dev-shm-usage}"
+      SELKIES_FILE_TRANSFERS: "true"
+      SELKIES_UI_SIDEBAR_SHOW_FILES: "true"
+    volumes:
+      - ./data:/config
+    shm_size: "1gb"

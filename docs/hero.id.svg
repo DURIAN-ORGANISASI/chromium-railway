@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="t d">
+  <title id="t">Chromium Railway Desktop</title><desc id="d">A visual Chromium browser desktop runs on Railway with username and password access.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101827"/><stop offset="1" stop-color="#142D45"/></linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4285F4"/><stop offset="1" stop-color="#18B6C9"/></linearGradient>
+  </defs>
+  <rect width="1200" height="420" rx="28" fill="url(#bg)"/>
+  <circle cx="1000" cy="70" r="210" fill="#1D4ED8" opacity=".12"/>
+  <circle cx="1080" cy="370" r="170" fill="#06B6D4" opacity=".10"/>
+  <g transform="translate(78 90)">
+    <rect width="500" height="240" rx="22" fill="#0B1220" stroke="#36516D" stroke-width="2"/>
+    <rect x="24" y="24" width="452" height="34" rx="9" fill="#1B2C42"/>
+    <circle cx="43" cy="41" r="5" fill="#FB7185"/><circle cx="62" cy="41" r="5" fill="#FBBF24"/><circle cx="81" cy="41" r="5" fill="#34D399"/>
+    <rect x="26" y="84" width="180" height="118" rx="14" fill="url(#blue)" opacity=".95"/>
+    <circle cx="116" cy="143" r="39" fill="none" stroke="#FFFFFF" stroke-width="8"/>
+    <circle cx="116" cy="143" r="15" fill="#FFFFFF"/>
+    <path d="M245 98h190M245 130h150M245 162h174" stroke="#7DD3FC" stroke-width="9" stroke-linecap="round" opacity=".8"/>
+    <path d="M245 192h105" stroke="#34D399" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(660 94)">
+    <text x="0" y="18" fill="#7DD3FC" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="3">REMOTE DESKTOP BROWSER</text>
+    <text x="0" y="82" fill="#FFFFFF" font-family="Arial,sans-serif" font-size="48" font-weight="700">Chromium</text>
+    <text x="0" y="132" fill="#FFFFFF" font-family="Arial,sans-serif" font-size="48" font-weight="700">on Railway</text>
+    <text x="0" y="180" fill="#B9C9DA" font-family="Arial,sans-serif" font-size="20">Desktop · HTTPS · Persistent profile</text>
+    <rect x="0" y="210" width="310" height="44" rx="12" fill="#123B52" stroke="#3B82F6"/>
+    <text x="20" y="238" fill="#BFEAFF" font-family="Arial,sans-serif" font-size="16" font-weight="700">USERNAME + PASSWORD LOGIN</text>
+  </g>
+</svg>
