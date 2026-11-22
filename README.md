@@ -43,6 +43,7 @@ Chromium berjalan di satu Docker service Railway. Antarmuka desktop dikirim ke b
 - **Startup kompatibel dengan Railway:** wrapper khusus menjalankan service tree s6 tanpa memanggil `/init` sebagai PID 1, sehingga menghindari error `s6-overlay-suexec: fatal: can only run as pid 1`.
 - **Login sebelum browser dibuka:** Nginx selalu meminta `CUSTOM_USER` dan `PASSWORD`; password di-hash dan tidak diteruskan ke environment proses desktop.
 - **Health check:** endpoint internal `/healthz` tersedia untuk pemeriksaan deployment Railway.
+- **Default ringan untuk Railway 1 GB:** desktop dikunci pada 1280×720 dan 30 FPS agar browser tidak dibebani stream software 1920-piksel / 60 FPS.
 
 - **Chromium Desktop:** browser lengkap dengan tampilan visual, bukan mode headless.
 - **Akses dari mana saja:** buka domain Railway lewat Chrome, Edge, Firefox, atau browser modern lainnya.

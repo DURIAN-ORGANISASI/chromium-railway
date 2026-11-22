@@ -31,6 +31,9 @@ if (ROOT / "Dockerfile").exists():
         errors.append("Dockerfile must use the Railway-compatible startup wrapper.")
     if "EXPOSE 3000" not in dockerfile:
         errors.append("Dockerfile must expose port 3000.")
+    for setting in ["SELKIES_MANUAL_RESOLUTION=true", "SELKIES_MANUAL_WIDTH=1280", "SELKIES_MANUAL_HEIGHT=720", "SELKIES_FRAMERATE=30-30"]:
+        if setting not in dockerfile:
+            errors.append(f"Dockerfile is missing low-memory desktop default: {setting}")
     if "PASSWORD=" in dockerfile:
         errors.append("Do not bake credentials into the Dockerfile.")
 

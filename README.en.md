@@ -43,6 +43,7 @@ Chromium runs as a single Docker service on Railway. Its desktop interface is st
 - **Railway-compatible startup:** a dedicated wrapper starts the upstream s6 service tree without calling `/init` as PID 1, avoiding `s6-overlay-suexec: fatal: can only run as pid 1`.
 - **Login before desktop access:** Nginx always requires `CUSTOM_USER` and `PASSWORD`; the password is hashed and removed before desktop processes start.
 - **Health check:** an internal `/healthz` endpoint is available for Railway deployment checks.
+- **Lightweight default for 1 GB Railway services:** desktop is locked to 1280×720 at 30 FPS to avoid the overhead of a 1920-pixel / 60 FPS software stream.
 
 - **Chromium Desktop:** full visual browser, not headless mode.
 - **Access from anywhere:** open the Railway domain in Chrome, Edge, Firefox, or another modern browser.

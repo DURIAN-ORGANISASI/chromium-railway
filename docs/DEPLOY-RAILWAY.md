@@ -23,6 +23,13 @@ PORT=3000
 TZ=Asia/Jakarta
 HARDEN_DESKTOP=true
 RAILWAY_SHM_SIZE_BYTES=1073741824
+DISPLAY_SIZEW=1280
+DISPLAY_SIZEH=720
+DISPLAY_REFRESH=30
+SELKIES_MANUAL_RESOLUTION=true
+SELKIES_MANUAL_WIDTH=1280
+SELKIES_MANUAL_HEIGHT=720
+SELKIES_FRAMERATE=30-30
 ```
 
 - `CUSTOM_USER`: username login. Karakter yang didukung: huruf, angka, titik, underscore, @, dan tanda hubung.
@@ -31,6 +38,9 @@ RAILWAY_SHM_SIZE_BYTES=1073741824
 - `TZ`: zona waktu container.
 - `HARDEN_DESKTOP`: `true` menonaktifkan terminal dan sudo di desktop.
 - `SELKIES_FILE_TRANSFERS`: `upload,download` mengaktifkan kedua arah transfer file pada sidebar.
+- `DISPLAY_SIZEW`, `DISPLAY_SIZEH`, `DISPLAY_REFRESH`: mode desktop awal 1280×720 pada 30 Hz.
+- `SELKIES_MANUAL_RESOLUTION`, `SELKIES_MANUAL_WIDTH`, `SELKIES_MANUAL_HEIGHT`: mengunci resolusi stream pada 1280×720 agar browser client tidak memaksakan desktop 1920 piksel.
+- `SELKIES_FRAMERATE`: `30-30` mengunci stream pada 30 FPS. Ini default yang lebih ringan untuk container Railway 1 GB tanpa GPU.
 - `RAILWAY_SHM_SIZE_BYTES`: shared memory yang diminta, 1 GiB. Startup wrapper memakai `--disable-dev-shm-usage` secara otomatis jika shared memory aktual kurang dari 512 MiB.
 
 Jangan gunakan password contoh. Bila `PASSWORD` kosong atau tidak valid, startup sengaja mengunci login dengan password acak yang tidak diketahui dan mencatat peringatan ke Deploy Logs.
@@ -67,7 +77,7 @@ Buka domain Railway melalui HTTPS. Masukkan nilai `CUSTOM_USER` dan `PASSWORD` d
 | Healthcheck gagal | Pastikan `/healthz` aktif dan service telah menggunakan image hasil build terbaru. |
 | Dialog login terus muncul | Periksa `CUSTOM_USER` dan `PASSWORD`; pastikan password minimal 8 karakter dan redeploy. |
 | Profil hilang sesudah redeploy | Pastikan Volume terpasang di `/config`. |
-| Chromium crash / tab “Aw, Snap!” | Kurangi tab, cek memory limit Railway, dan pastikan shared-memory fallback aktif. Untuk desktop visual, alokasikan RAM minimal 1 GB; lebih banyak RAM lebih stabil. |
+| Chromium crash / tab “Aw, Snap!” | Container 1 GB memakai default 1280×720 / 30 FPS. Kurangi tab dan workload berat. Bila perlu beberapa tab/halaman AI sekaligus, gunakan paket Railway dengan batas memori lebih tinggi. Pastikan shared-memory fallback aktif. |
 
 ## 7. Keamanan
 
