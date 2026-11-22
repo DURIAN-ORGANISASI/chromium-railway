@@ -14,7 +14,7 @@ ENV PUID=1000 \
     PORT=3000 \
     TZ=Asia/Jakarta \
     HARDEN_DESKTOP=true \
-    SELKIES_FILE_TRANSFERS=true \
+    SELKIES_FILE_TRANSFERS=upload,download \
     SELKIES_UI_SIDEBAR_SHOW_FILES=true
 
 COPY services/browser/patch-image.sh /tmp/railway-desktop/patch-image.sh
