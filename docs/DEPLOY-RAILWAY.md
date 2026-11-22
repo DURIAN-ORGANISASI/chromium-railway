@@ -30,6 +30,7 @@ RAILWAY_SHM_SIZE_BYTES=1073741824
 - `PORT`: port Nginx/desktop, tetap `3000`.
 - `TZ`: zona waktu container.
 - `HARDEN_DESKTOP`: `true` menonaktifkan terminal dan sudo di desktop.
+- `SELKIES_FILE_TRANSFERS`: `upload,download` mengaktifkan kedua arah transfer file pada sidebar.
 - `RAILWAY_SHM_SIZE_BYTES`: shared memory yang diminta, 1 GiB. Startup wrapper memakai `--disable-dev-shm-usage` secara otomatis jika shared memory aktual kurang dari 512 MiB.
 
 Jangan gunakan password contoh. Bila `PASSWORD` kosong atau tidak valid, startup sengaja mengunci login dengan password acak yang tidak diketahui dan mencatat peringatan ke Deploy Logs.
@@ -51,7 +52,7 @@ Volume menyimpan profil browser, cookies, ekstensi, bookmark, pengaturan, dan fi
 - Healthcheck path: `/healthz`.
 - Healthcheck timeout: `120` detik.
 
-Endpoint `/healthz` diteruskan ke health endpoint Selkies tanpa meminta Basic Auth, sehingga Railway dapat memeriksa service. Semua halaman browser tetap memerlukan login.
+Endpoint `/healthz` mengembalikan HTTP 200 sederhana tanpa Basic Auth agar probe Railway dapat memeriksa web server. Endpoint ini hanya untuk liveness, bukan endpoint browser. Semua halaman browser dan stream tetap memerlukan login.
 
 ## 5. Login
 
