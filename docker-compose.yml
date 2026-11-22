@@ -9,14 +9,19 @@ services:
     ports:
       - "3000:3000"
     environment:
+      PUID: "1000"
+      PGID: "1000"
+      START_DOCKER: "false"
+      SELKIES_ALLOWED_ORIGINS: ""
+      SELKIES_ENABLE_BASIC_AUTH: "false"
+      TITLE: "Chromium"
       CUSTOM_USER: "${CUSTOM_USER:-chromium}"
       PASSWORD: "${PASSWORD:?Set PASSWORD in .env before starting}"
       PORT: "${PORT:-3000}"
       TZ: "${TZ:-Asia/Jakarta}"
       HARDEN_DESKTOP: "${HARDEN_DESKTOP:-true}"
-      CHROME_CLI: "${CHROME_CLI:---disable-dev-shm-usage}"
-      SELKIES_FILE_TRANSFERS: "true"
-      SELKIES_UI_SIDEBAR_SHOW_FILES: "true"
+      SELKIES_FILE_TRANSFERS: "${SELKIES_FILE_TRANSFERS:-true}"
+      SELKIES_UI_SIDEBAR_SHOW_FILES: "${SELKIES_UI_SIDEBAR_SHOW_FILES:-true}"
     volumes:
       - ./data:/config
     shm_size: "1gb"

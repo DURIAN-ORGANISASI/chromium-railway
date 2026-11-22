@@ -31,7 +31,7 @@ Chromium runs as a single Docker service on Railway. Its desktop interface is st
 | Component | Configuration |
 | --- | --- |
 | Browser | Chromium Desktop |
-| Base image | `ghcr.io/two-workspaces/chromium:246dc28` |
+| Base image | `lscr.io/linuxserver/chromium:7b8e918f-ls63 (pinned digest)` |
 | Internal port | `3000` |
 | Access | Railway HTTPS domain |
 | Login | `CUSTOM_USER` + `PASSWORD` |
@@ -39,6 +39,10 @@ Chromium runs as a single Docker service on Railway. Its desktop interface is st
 | Additional services | None required |
 
 ## Features
+
+- **Railway-compatible startup:** a dedicated wrapper starts the upstream s6 service tree without calling `/init` as PID 1, avoiding `s6-overlay-suexec: fatal: can only run as pid 1`.
+- **Login before desktop access:** Nginx always requires `CUSTOM_USER` and `PASSWORD`; the password is hashed and removed before desktop processes start.
+- **Health check:** an internal `/healthz` endpoint is available for Railway deployment checks.
 
 - **Chromium Desktop:** full visual browser, not headless mode.
 - **Access from anywhere:** open the Railway domain in Chrome, Edge, Firefox, or another modern browser.
@@ -142,7 +146,10 @@ You can browse websites, create bookmarks, install extensions, sign in to websit
 
 | Path | Purpose |
 | --- | --- |
-| `Dockerfile` | Selects the Chromium image and default configuration. |
+| `Dockerfile` | Digest-pinned LinuxServer Chromium image with a Railway-specific entry point. |
+| `services/browser/railway-start.sh` | Prepares login and starts the s6 service tree without the PID 1 conflict. |
+| `services/browser/patch-image.sh` | Enables Nginx authentication, Origin protection, security headers, and `/healthz` at build time. |
+| `services/browser/pkg-restore.sh` | Restores requested extra packages from service Variables. |
 | `docker-compose.yml` | Runs Chromium locally for testing. |
 | `.env.example` | Local environment template without an active password. |
 | `docs/DEPLOY-RAILWAY.md` | Step-by-step Railway deployment guide. |
@@ -203,10 +210,11 @@ GitHub Actions checks documentation, repository structure, JSON, and SVG files o
 
 ## Sources, attribution, and licensing
 
-See [`docs/SOURCES.md`](docs/SOURCES.md) for official documentation, attribution, and licensing boundaries.
+See [`docs/SOURCES.md`](docs/SOURCES.md) and [`NOTICE.md`](NOTICE.md) for upstream references, attribution, and licensing boundaries.
 
-- **Repository files and Docker definition:** MIT; see [`LICENSE`](LICENSE).
-- **Chromium image:** uses the community image `ghcr.io/two-workspaces/chromium:246dc28`, built on the LinuxServer Chromium/Selkies ecosystem. The image and its components remain under their respective licenses.
+- **Original documentation and artwork:** MIT; see [`LICENSE`](LICENSE).
+- **Integrated Dockerfile and Railway compatibility code in `services/browser/`:** GPL-3.0-or-later; see [`LICENSES/GPL-3.0-or-later.txt`](LICENSES/GPL-3.0-or-later.txt) and [`NOTICE.md`](NOTICE.md).
+- **Chromium image:** uses the community image `lscr.io/linuxserver/chromium:7b8e918f-ls63 (pinned digest)`, built on the LinuxServer Chromium/Selkies ecosystem. The image and its components remain under their respective licenses.
 - **Chromium and dependencies:** have their own licenses and third-party notices. This repository license does not change upstream licensing.
 - **Third parties:** Railway, Docker, LinuxServer, Selkies, Chromium, and image publishers are subject to their respective terms.
 

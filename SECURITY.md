@@ -29,3 +29,12 @@ The `/config` Volume contains sensitive data including browser cookies, saved pa
 ## Reporting
 
 Report vulnerabilities privately to the repository owner. Include the affected deployment version and reproduction steps, but never include live passwords, cookies, session identifiers, or personal data.
+
+
+## Runtime safeguards
+
+- Nginx Basic Authentication is enabled in the image at build time; it is not optional at runtime.
+- The startup wrapper writes a SHA-512 crypt password hash to `/etc/nginx/.htpasswd` and removes the plaintext password from the environment before starting desktop services.
+- An Nginx Origin check protects the browser WebSocket from cross-site websites attempting to reuse a cached login.
+- `/healthz` is the only unauthenticated HTTP route and returns the internal Selkies health state for Railway probes. It does not expose the browser UI.
+- The s6 service tree is started by the Railway-specific wrapper rather than the upstream `/init` PID-1 entry point.

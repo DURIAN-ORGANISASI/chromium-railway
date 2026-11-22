@@ -31,7 +31,7 @@ Chromium berjalan di satu Docker service Railway. Antarmuka desktop dikirim ke b
 | Komponen | Konfigurasi |
 | --- | --- |
 | Browser | Chromium Desktop |
-| Image dasar | `ghcr.io/two-workspaces/chromium:246dc28` |
+| Image dasar | `lscr.io/linuxserver/chromium:7b8e918f-ls63 (pinned digest)` |
 | Port internal | `3000` |
 | Akses | Domain HTTPS Railway |
 | Login | `CUSTOM_USER` + `PASSWORD` |
@@ -39,6 +39,10 @@ Chromium berjalan di satu Docker service Railway. Antarmuka desktop dikirim ke b
 | Service tambahan | Tidak diperlukan |
 
 ## Fitur
+
+- **Startup kompatibel dengan Railway:** wrapper khusus menjalankan service tree s6 tanpa memanggil `/init` sebagai PID 1, sehingga menghindari error `s6-overlay-suexec: fatal: can only run as pid 1`.
+- **Login sebelum browser dibuka:** Nginx selalu meminta `CUSTOM_USER` dan `PASSWORD`; password di-hash dan tidak diteruskan ke environment proses desktop.
+- **Health check:** endpoint internal `/healthz` tersedia untuk pemeriksaan deployment Railway.
 
 - **Chromium Desktop:** browser lengkap dengan tampilan visual, bukan mode headless.
 - **Akses dari mana saja:** buka domain Railway lewat Chrome, Edge, Firefox, atau browser modern lainnya.
@@ -142,7 +146,10 @@ Kamu dapat membuka situs, membuat bookmark, memasang ekstensi, login akun websit
 
 | Path | Fungsi |
 | --- | --- |
-| `Dockerfile` | Menentukan image Chromium yang digunakan dan konfigurasi default. |
+| `Dockerfile` | Image LinuxServer Chromium yang dipatok digest dan entry point khusus Railway. |
+| `services/browser/railway-start.sh` | Menyiapkan autentikasi dan menjalankan service s6 tanpa konflik PID 1. |
+| `services/browser/patch-image.sh` | Mengaktifkan autentikasi Nginx, proteksi Origin, header keamanan, dan `/healthz` saat build. |
+| `services/browser/pkg-restore.sh` | Memulihkan paket tambahan yang diminta melalui Variables. |
 | `docker-compose.yml` | Menjalankan Chromium secara lokal untuk pengujian. |
 | `.env.example` | Template Variables lokal tanpa password aktif. |
 | `docs/DEPLOY-RAILWAY.md` | Panduan deploy langkah demi langkah. |
@@ -205,8 +212,9 @@ GitHub Actions memeriksa dokumentasi, struktur file, JSON, dan SVG saat push ata
 
 Lihat [`docs/SOURCES.md`](docs/SOURCES.md) untuk sumber resmi, atribusi, serta batas lisensi.
 
-- **File repository dan definisi Docker:** MIT, lihat [`LICENSE`](LICENSE).
-- **Image Chromium:** menggunakan image komunitas `ghcr.io/two-workspaces/chromium:246dc28`, yang dibuat berdasarkan ekosistem LinuxServer Chromium/Selkies. Image dan seluruh komponennya tetap mengikuti lisensi masing-masing.
+- **Dokumentasi, artwork, dan materi orisinal:** MIT, lihat [`LICENSE`](LICENSE).
+- **Dockerfile integrasi dan kode kompatibilitas Railway di `services/browser/`:** GPL-3.0-or-later, lihat [`LICENSES/GPL-3.0-or-later.txt`](LICENSES/GPL-3.0-or-later.txt) dan [`NOTICE.md`](NOTICE.md).
+- **Image Chromium:** menggunakan image komunitas `lscr.io/linuxserver/chromium:7b8e918f-ls63 (pinned digest)`, yang dibuat berdasarkan ekosistem LinuxServer Chromium/Selkies. Image dan seluruh komponennya tetap mengikuti lisensi masing-masing.
 - **Chromium dan dependency:** memiliki lisensi serta pemberitahuan pihak ketiga sendiri. Lisensi repository ini tidak mengubah lisensi upstream.
 - **Pihak ketiga:** Railway, Docker, LinuxServer, Selkies, Chromium, dan penyedia image mengikuti ketentuan masing-masing.
 

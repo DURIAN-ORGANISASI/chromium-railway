@@ -1,13 +1,22 @@
 # Sources, Attribution, and Licensing
 
-## Browser image and desktop stack
+## Runtime and browser
 
-- [Chromium project](https://www.chromium.org/)
 - [LinuxServer Chromium documentation](https://docs.linuxserver.io/images/docker-chromium/)
 - [LinuxServer Docker Chromium source](https://github.com/linuxserver/docker-chromium)
 - [LinuxServer Selkies base image](https://github.com/linuxserver/docker-baseimage-selkies)
 - [Selkies web desktop](https://github.com/selkies-project/selkies)
-- Community Railway image used by this repository: [`ghcr.io/two-workspaces/chromium:246dc28`](https://railway.com/deploy/chromium-your-browser-in-the-cloud--chromium)
+- [Chromium project](https://www.chromium.org/)
+
+The Dockerfile pins `lscr.io/linuxserver/chromium:7b8e918f-ls63` by manifest digest. Review upstream tags and security updates before changing that pin.
+
+## Railway compatibility code attribution
+
+The Railway startup workaround, Nginx hardening patch, and package-restore helper in `services/browser/` are based on the public implementation at:
+
+- https://github.com/baranberkay96/chromium-browser-railway
+
+Those files are distributed under GPL-3.0-or-later. The full license is provided in [`LICENSES/GPL-3.0-or-later.txt`](../LICENSES/GPL-3.0-or-later.txt), and file-level attribution/changes are documented in [`NOTICE.md`](../NOTICE.md).
 
 ## Railway documentation
 
@@ -18,12 +27,6 @@
 
 ## Licensing boundary
 
-The repository's original documentation, deployment files, and assets are distributed under the MIT License; see [`../LICENSE`](../LICENSE).
+Original project documentation, SVG artwork, and supporting material remain under the MIT License in [`LICENSE`](../LICENSE). The adapted Railway compatibility code and integrated Dockerfile are GPL-3.0-or-later. The base image and all bundled programs remain under their respective upstream licenses.
 
-The Dockerfile uses the community-published image `ghcr.io/two-workspaces/chromium:246dc28`. This image is built on the LinuxServer Chromium/Selkies stack. Chromium, LinuxServer, Selkies, and bundled packages carry their own licenses and notices. The repository license does not relicense the upstream image or its dependencies. Review the publisher's and upstream projects' current terms before redistributing or offering the image to others.
-
-Product names and trademarks belong to their respective owners.
-
-## Independence
-
-This is an independent deployment repository. It is not affiliated with or endorsed by Google, the Chromium project, LinuxServer.io, Selkies, Two Workspaces, or Railway.
+This repository is an independent community deployment and is not affiliated with or endorsed by Google, Chromium, LinuxServer.io, Selkies, or Railway.
