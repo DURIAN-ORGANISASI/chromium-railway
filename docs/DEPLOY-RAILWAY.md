@@ -45,7 +45,7 @@ SELKIES_FRAMERATE=30-30
 
 Jangan gunakan password contoh. Bila `PASSWORD` kosong atau tidak valid, startup sengaja mengunci login dengan password acak yang tidak diketahui dan mencatat peringatan ke Deploy Logs.
 
-## 3. Filesystem biasa tanpa Volume
+## 3. Filesystem container biasa (tanpa Railway Volume)
 
 Jangan buat Railway Volume dan jangan pasang storage eksternal pada `/config`. Direktori `/config` disediakan oleh image Chromium dan menggunakan filesystem writable biasa milik container. Profil browser, cookies, ekstensi, bookmark, pengaturan, dan unduhan hanya bersifat sementara. Semuanya akan hilang ketika container dibuat ulang atau deployment diganti.
 
