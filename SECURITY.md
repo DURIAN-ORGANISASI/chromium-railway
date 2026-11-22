@@ -16,12 +16,12 @@ Railway generated domains use HTTPS. Keep the browser behind the login prompt an
 
 A user who can sign in can control the browser, open websites, access websites signed in to the profile, and interact with files exposed through the desktop. Keep `HARDEN_DESKTOP=true` to disable terminal and sudo access in the desktop session. Avoid untrusted downloads and websites.
 
-The `/config` Volume contains sensitive data including browser cookies, saved passwords, history, extensions, settings, and downloads. Limit access to the Railway project and its Volumes.
+The `/config` directory contains sensitive data including browser cookies, saved passwords, history, extensions, settings, and downloads. In the no-Volume deployment, these files live on the container's temporary writable filesystem and are lost when Railway recreates the container. Limit access to the Railway project and do not treat the container filesystem as a backup.
 
 ## Deployment recommendations
 
-- Use one replica for a single persistent browser profile.
-- Attach a Railway Volume at `/config`.
+- Use one replica for one browser session.
+- Do not attach a Railway Volume; the browser profile is intentionally temporary in the container filesystem.
 - Do not expose additional ports unless required.
 - Keep the image tag pinned and review updates before changing it.
 - Monitor Railway resource usage; Chromium desktop sessions consume RAM and CPU.

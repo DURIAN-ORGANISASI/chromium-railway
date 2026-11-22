@@ -71,7 +71,7 @@ if (ROOT / "docker-compose.yml").exists():
     if "\\n    volumes:" in compose:
         errors.append("docker-compose.yml must not mount a local or external volume at /config.")
 
-for relative in ["README.md", "README.en.md", "docs/DEPLOY-RAILWAY.md"]:
+for relative in ["README.md", "README.en.md", "docs/DEPLOY-RAILWAY.md", "SECURITY.md"]:
     path = ROOT / relative
     if path.exists():
         content = path.read_text(encoding="utf-8").lower()
